@@ -1,0 +1,32 @@
+on:
+  push:
+    branches:
+      - main
+      - add_lint_action
+  pull_request:
+
+name: golangci-lint
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+      - name: Install deps
+        run: sudo apt-get -y update && sudo apt-get -y install gcc
+      - name: mod tidy
+        run: go mod tidy
+        #- name: make-lint
+        #run: make setup && make lint
+      - name: Lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.31
+          skip-build-cache: true
+          skip-pkg-cache: true
+

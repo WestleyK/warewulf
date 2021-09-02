@@ -62,6 +62,7 @@ func CobraRunE(cmd *cobra.Command, args []string) error {
 		ssh.Configure(false)
 
 	} else {
+		//nolint:errcheck
 		cmd.Help()
 		os.Exit(0)
 	}
