@@ -111,7 +111,7 @@ func CopyFiles(source string, dest string) error {
 			if err != nil {
 				return err
 			}
-			err = CopyUIDGID(source,dest)
+			err = CopyUIDGID(source, dest)
 			if err != nil {
 				return err
 			}
@@ -314,4 +314,46 @@ func CopyUIDGID(source string, dest string) error {
 	wwlog.Printf(wwlog.DEBUG, "Chown '%i':'%i' '%s'\n", UID, GID, dest)
 	err = os.Chown(dest, UID, GID)
 	return err
+}
+
+func SplitEscaped(input, delim, escape string) []string {
+	var ret []string
+	str := ""
+	for i := 1; i < len(input); i++ {
+		str += string(input[i-1])
+		if string(input[i]) == delim && string(input[i-1]) != escape {
+			i++
+			ret = append(ret, str)
+			str = ""
+		}
+		if string(input[i]) == escape {
+			i++
+		}
+
+	}
+	str += string(input[len(input)-1])
+	ret = append(ret, str)
+
+	return (ret)
+}
+
+func SplitValidPaths(input, delim string) []string {
+	var ret []string
+	str := ""
+	for i := 1; i < len(input); i++ {
+		str += string(input[i-1])
+		if (string(input[i]) == delim && string(input[i-1]) != "\\") && (IsDir(str) || IsFile(str)) {
+			i++
+			ret = append(ret, str)
+			str = ""
+		}
+		if string(input[i]) == "\\" {
+			i++
+		}
+
+	}
+	str += string(input[len(input)-1])
+	ret = append(ret, str)
+
+	return (ret)
 }
